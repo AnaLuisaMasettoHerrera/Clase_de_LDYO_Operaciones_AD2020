@@ -1,0 +1,593 @@
+---
+title: "Introducción a R" #Titulo que va a tener el documento 
+output: #Formato de archivo 
+  pdf_document:
+    number_sections: true #asignar número dependiendo de la sección 
+---
+
+\pagebreak 
+ 
+\renewcommand{\figurename}{Figura} 
+\renewcommand*\contentsname{Contenido} 
+
+\tableofcontents
+
+\pagebreak 
+
+#Información básica 
+
+## Descargar e Instalar R y RStudio
+
+1. Descargar R (https://cran.r-project.org/). 
+2. Descargar RStudio (https://rstudio.com/products/rstudio/download/). 
+
+## ¿Qué es R? 
+
+R es un lenguaje y entorno de libre acceso para __computación estadística__ y __gráficos__. R cuenta con una amplia variedad de técnicas estadísticas y gráficas: modelado lineal y no lineal, pruebas estadísticas, análisis de series de tiempo, clasificación, agrupamiento, etc.\cite{intro_r}
+
+## ¿Qué es RStudio? 
+
+Es una interfase que permite crear una interacción más fluida con el programa R. Sus principales ventajas son: __el orden__ y __la visualización de los procesos__ que son llevados a cabo con R. \cite{intro_rstudio}
+
+## RMarkdown y RScript 
+
+RStudip tiene la opción de generar diferentes tipos de documentos, los que se van a abarcar en este documento son: __Rmarkdown__ y __RScript__. Para crear cualquiera de estos dos tipos de documentos es necesario: abrir _la aplicación de RStudio_, en la barra principal seleccionar _file_, y seleccionar __Rmarkdown__ o __Rscript__. 
+
+\begin{figure}[h]
+\includegraphics{im0.png}
+\centering
+\caption{Crear un documento nuevo.}
+\end{figure}
+
+### Rscript 
+
+\pagebreak 
+
+Un __script__ es un archivo de texto que contiene diversos comandos y comentarios. 
+
+\begin{figure}[h]
+\includegraphics{im1.png}
+\centering
+\caption{Rscript en RStudio.}
+\end{figure}
+
+### RMarkdown 
+
+R Markdown es un formato que permite una fácil creación de documentos (HTML, PDF, Presentaciones y Documentos de Word). Dentro de estos documentos se pude incluir texto, imágenes, fórmulas y ecuaciones, gráficas y código. \cite{intro_rmarkdown}
+
+\begin{figure}[h]
+\includegraphics{im2.png}
+\centering
+\caption{RMarkdown en RStudio.}
+\end{figure}
+
+\pagebreak
+
+# R: Básico. 
+
+## Paquetes - Librerías  
+
+Actualmente, existen diversos paquetes (librerías) que permiten tener acceso a diversas funciones y datos, para facilitar el análisis y manejo de datos en R.
+
+### Instalar Paquetes. 
+
+__Opción 1:__ 
+
+```{r}
+#install.packages("tidyverse")
+```
+
+__Opción 2:__ 
+
+\begin{figure}[h]
+\includegraphics{im3.png}
+\centering
+\caption{Instalar paquetes.}
+\end{figure}
+
+
+### Llamar Paquetes. 
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+
+```
+
+_¡Importante! Tidyverse es un paquete que ayuda en el proceso de importar, transformar, visualizar, modelar y comunicar toda la información que normalmente utilizamos en procesos de ciencia de datos.\cite{introtidyverse}_
+
+### Otras Paqueterias importantes. 
+
+```{r}
+#dplyr - Data manipulation (arrange, filter, group_by, join, lag, select, etc.)
+#readr - Read Rectangular Text Data (read_csv, write_csv)
+#ggplot2 - Create Elegant Data Visualisations Using the Grammar of Graphics. 
+#lubridate - Make Dealing with Dates a Little Easier. 
+#readxl - Read excel files. 
+```
+
+\pagebreak
+
+### Ayuda - Información sobre Paquetes. 
+
+\begin{figure}[h]
+\includegraphics{im4.png}
+\centering
+\caption{Sección de paquetes y ayuda para obtener más información.}
+\end{figure}
+
+
+\begin{figure}[h]
+\includegraphics{ejercicio.png}
+\centering
+\end{figure}
+
+__............................................................................................__
+
+__Ejercicio 1: Introducción a R__
+
+1. Crear un Rmarkdown para desarrollar __TODOS__ los ejercicios de esta sesión. Nombre del documento: _"Actividad_04_A0Matrícula_Nombre_Apellido"_ 
+
+2. Instalar tidyverse y llamar la librería (incluir los comandos que se utilizaron). 
+
+```{r}
+#Respuesta
+```
+
+__............................................................................................__
+
+\pagebreak
+
+## Comandos básicos 
+
+### Operaciones matemáticas clásicas 
+
+```{r}
+suma <- 10 + 5 
+suma
+```
+
+```{r}
+resta <- 10 - 5 
+resta
+```
+
+```{r}
+multiplicacion <- 10 * 5
+multiplicacion
+```
+
+```{r}
+division <- 10 / 5 
+division
+```
+
+```{r}
+exponencial <- 10 ^ 5
+exponencial
+```
+
+```{r}
+raiz <- 16 ^ (1/2)
+raiz
+
+raiz2 <- sqrt(16)
+raiz2
+```
+
+```{r}
+valores <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+promedio <- mean(valores)
+promedio
+```
+
+### Nombres de Objetos
+
+- Minúsculas. 
+- Sin espacios (en lugar de espacios colocar _ ). 
+- Nombres significativos al contexto. 
+
+```{r}
+#Convertir grados fahrenheit a celsius 
+
+grados_fahrenheit <- 50
+grados_celsius <- (5 / 9) * (grados_fahrenheit - 32)
+grados_celsius
+```
+
+### Funciones 
+
+```{r}
+fahrenheit_a_celsius <- function(grados_fahrenheit) {
+  grados_celsius <- (5 / 9) * (grados_fahrenheit - 32)
+  grados_celsius
+}
+```
+
+```{r}
+fahrenheit_a_celsius(32)
+```
+
+\begin{figure}[h]
+\includegraphics{ejercicio.png}
+\centering
+\end{figure}
+
+__............................................................................................__
+
+__Ejercicio 2: Funciones y Operaciones básicas.__ 
+
+__(15 minutos)__
+
+1. Programar la función para transformar grados celsius a grados fahrenheit. Probar con grados_celsius = 0 y otros 2 números que quieras probar. 
+
+```{r}
+#Respuesta
+```
+
+2. Programar la función para transformar grados celsius a grados Kelvin. Probar con grados_celsius = 0 y otros 2 números que quieras probar.
+
+```{r}
+#Respuesta
+```
+
+3. Programar la función para transformar grados fahrenheit a grados Kelvin, utilizando las dos funciones anteriores. Probar con grados_fahrenheit = 32 y otros 2 números que quieras probar.
+
+```{r}
+#Respuesta
+```
+
+__............................................................................................__
+
+## Dataframe: Estructura fundamental para manipular Conjuntos de Datos. 
+
+### Datasets
+
+Un dataset es un conjunto de datos. En R hay muchos conjuntos de datos que pueden ser utilizados. 
+
+```{r}
+#data() - para visualizar la lista con todos los datasets precargados. 
+```
+
+### Dataframe: Estructura base para manipular Conjuntos de Datos 
+
+```{r, warning=FALSE}
+#Instalar "titanic" con botones (opción 2)
+library(titanic)
+titanic1 <- titanic_train
+head(titanic1,3)
+```
+
+```{r}
+class(titanic1)
+```
+
+```{r}
+#Dimensión de los datos
+dim(titanic1)
+```
+
+### Clases de Datos 
+
+Hay muchas clases de datos, pero las más importantes/comúnes son las siguientes: 
+
+1. __INT (Integer)__. Números enteros. 
+2. __CHAR (Character)__. Variables con contenido no numérico. 
+3. __NUM (Numeric)__. Números. 
+4. __FACT (Factor)__. Es el tipo de datos para designar a variables cualitativas. 
+
+```{r}
+str(titanic1)
+```
+
+```{r}
+#Cambiar tipo de datos en dataframe 
+titanic1$PassengerId <- as.character(titanic1$PassengerId)
+class(titanic1$PassengerId)
+```
+```{r}
+titanic1$Sex <- as.factor(titanic1$Sex)
+class(titanic1$Sex)
+levels(titanic1$Sex)
+```
+
+\begin{figure}[h]
+\includegraphics{ejercicio.png}
+\centering
+\end{figure}
+
+__............................................................................................__
+
+__Ejercicio 3: Tipos de Datos.__ 
+
+__(15 minutos)__
+
+1. Instalar el paquete "titanic" en RStudio, llamar la librería y asignar a un objeto (con el nombre de tu elección) los datos de entrenamiento que vienen en esa paqueteria ("titanic_train"). 
+
+```{r}
+#Respuesta 
+```
+
+2. Cambiar los tipos de datos a las variables necesarias y justificar por qué. 
+
+```{r}
+#Respuesta 
+```
+
+__............................................................................................__
+
+### Operador Pipeline: %>% 
+
+En R cuando uno hace varias operaciones es difícil leer y entender el código; el operador pipeline facilita la creación de código con varias operaciones, al permitir leer las operaciones que vamos aplicando de izquierda a derecha y de arriba hacia abajo.
+
+### Filtro y selección de Datos: SELECT y FILTER. 
+
+Existen varios comandos para filtrar y seleccionar datos.  
+
+#### Visualizar Renglones, Variables y Valores específicos de un Dataframe utilizando _Corchetes_. 
+
+```{r}
+#Selecciar un renglón en específico de un dataframe. 
+titanic1[1, ]
+```
+
+```{r}
+#Seleccionar una columna en específico de un dataframe. 
+head(titanic1[, 1],3)
+```
+
+```{r}
+#Seleccionar un valor específico de un dataframe. 
+titanic1[1,4]
+```
+
+#### Comando: SELECT
+
+__Select:__ Comando de la librería _tidyverse_ que sirve para selecciona columnas de acuerdo a algún nombre de las variables. 
+
+```{r}
+#Selección de la columna completa 
+select1 <- titanic1 %>% select("PassengerId")
+head(select1, 3)
+```
+
+```{r}
+select2 <- titanic1 %>% select(-Age)
+dim(select2)
+```
+
+```{r}
+select3 <- titanic1 %>% select(-Survived, -Age)
+dim(select3)
+```
+
+```{r}
+select4 <- titanic1 %>% select(Name, Survived, Age)
+head(select4, 3)
+```
+
+#### Comando: FILTER 
+
+Operadores importantes: 
+
+- __x > 1__; 
+- __x >= 1__; 
+- __x < 1__; 
+- __x <= 1__; 
+- __x != 1__; 
+- __x == 1__
+
+
+__Filter:__ Comando de la librería _tidyverse_ que sirve para obtener un subconjunto de las filas de acuerdo a algún criterio.
+
+```{r}
+filtro1 <- titanic1 %>% filter(Survived==1)
+#dim(titanic1) #891  12
+dim(filtro1)
+```
+```{r}
+head(filtro1,3)
+```
+
+```{r}
+filtro2 <- titanic1 %>% filter(Age <=10)
+dim(filtro2)
+```
+```{r}
+head(filtro2,3)
+```
+
+### Ordenar y Agrupar Datos: ARRANGE, GROUP_BY y SUMMARISE 
+
+#### Comando: Arrange 
+
+```{r}
+#Orden ascendente
+orden1 <- titanic1 %>% arrange(PassengerId)
+head(orden1, 3)
+```
+
+```{r}
+#Orden ascendente
+orden2 <- titanic1 %>% arrange(desc(PassengerId))
+head(orden2, 3)
+```
+
+#### Comandos: group_by y summarise
+
+Estos dos comandos trabajan muy bien juntos, dado que permite generar resumenes de variables. 
+
+```{r}
+resumen1 <- titanic1 %>% 
+  group_by(Sex) %>% 
+  summarise(total_survived = sum(Survived))
+resumen1
+```
+
+### Crear nuevas columnas: MUTATE 
+
+```{r}
+mutate_1 <- titanic1 %>% mutate(valor_individual = 1)
+dim(mutate_1)
+```
+```{r}
+head(mutate_1, 3)
+```
+
+\begin{figure}[h]
+\includegraphics{ejercicio.png}
+\centering
+\end{figure}
+
+__............................................................................................__
+
+__Ejercicio 4: Comandos generales de R para contestar Preguntas.__ 
+
+A continuación, se presentan unas preguntas; estas preguntas deben de tener una respuesta clara y concisa, y además se debe de incluir el código que se utilizó para llegar a las respuestas. 
+
+¡Importante! Si se desea revisar nuevamente las descripción de cada una de las variables, favor de dar click en "help" y en la sección de buscar, colocar "titanic_train". 
+
+
+1. ¿Cuantos hombres y mujeres había abordo? (Tip: Utilizar la variable creada "valor individual")
+
+```{r}
+#Respuesta
+```
+
+```{r}
+titanic1%>%group_by(Sex)%>%summarise(total_gender=sum(Sex=="male", Sex=="female"))
+```
+```{r}
+titanic1%>%filter(Sex == "male")
+```
+
+```{r}
+mutate_1%>%group_by(Sex)%>%summarise(total_genero = sum(valor_individual))%>%select(Sex)
+```
+
+
+2. ¿Cuántas clases había designadas para los pasajeros? 
+
+```{r}
+levels(as.factor(titanic1$Pclass))
+```
+
+```{r}
+mutate_1 %>% group_by(Pclass)%>%summarise(total = sum(valor_individual))%>%select(Pclass)
+```
+
+```{r}
+#Respuesta
+```
+
+3. ¿Cuántos pasajeros estaban en cada una de las clases? 
+
+```{r}
+mutate_1 %>% group_by(Pclass)%>%summarise(total = sum(valor_individual))
+```
+
+```{r}
+titanic1%>%group_by(Pclass)%>%summarise(total_class=sum(Pclass==1, Pclass==2, Pclass==3))
+```
+
+```{r}
+#Respuesta
+```
+
+5. ¿Cuál fue la clase que tuvo más decesos? 
+
+```{r}
+mutate_1%>%filter(Survived==0)%>%group_by(Pclass)%>%summarise(total = sum(valor_individual))
+```
+
+```{r}
+#Respuesta
+```
+
+6. ¿Cuál fue la clase que tuvo menos decesos?
+
+```{r}
+mutate_1%>%filter(Survived==0)%>%group_by(Pclass)%>%summarise(total = sum(valor_individual))
+```
+
+```{r}
+#Respuesta
+```
+
+7. ¿Cuántos pasajeros menores de 15 años sobrevivieron?
+
+```{r}
+mutate_1 %>% filter(Age<15, Survived==1)
+```
+
+```{r}
+#Respuesta
+```
+
+8. ¿Cuántos pasajeros mayores de 60 años sobrevivieron?
+
+```{r}
+mutate_1%>%filter(Age>60, Survived==1)
+```
+
+```{r}
+#Respuesta
+```
+
+9. ¿Cuántos pasajeros menores de 10 años iban a bordo? 
+
+```{r}
+mutate_1%>%filter(Age<10)
+```
+
+
+```{r}
+#Respuesta
+```
+
+10. ¿Cómo se llama el pasajero cuyo PassengerId es igual a 175? 
+
+```{r}
+mutate_1%>%filter(PassengerId=="175")
+```
+
+
+```{r}
+#Respuesta
+```
+
+11. ¿Cuál es el nombre de la person que tenía el número de ticket PC 17593? Busca el nombre en internet y describe brevemente quién era. 
+
+```{r}
+mutate_1%>%filter(Ticket=="PC 17593")
+```
+
+
+```{r}
+#Respuesta
+```
+
+
+__............................................................................................__
+
+\pagebreak
+
+\renewcommand\refname{Referencias}
+
+\begin{thebibliography}{0}
+
+  \bibitem{intro_r} Cran.RProject (2020). The Comprehensive R Archive Network. 13 de agosto de 2020, de Sitio web: \url{https://cran.r-project.org/}
+  
+  \bibitem{intro_rstudio} Boccardo, G.y Ruiz, F. (2019). RStudio para Estadística Descriptiva en Ciencias Sociales. 13 de agosto de 2020, de Sitio web: \url{https://bookdown.org/gboccardo/manual-ED-UCH/}
+
+  \bibitem{intro_rscript} Aleshunas, J. (s.f.). R learning infrastructure. 13 de agosto de 2020, de Sitio web: \url{http://mercury.webster.edu/aleshunas/R_learning_infrastructure/R%20scripts.html}
+
+  \bibitem{intro_rmarkdown} Rstudio. (2014). RMarkdown hoja de referencia. 13 de agosto de 2020, de Sitio web: \url{https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-spanish.pdfl}
+  
+  \bibitem{introtidyverse} Gonzalez, R. (2020). ¿Qué es tidyverse? 8 paquetes para ciencia de datos. 13 de agosto de 2020, de Sitio web: \url{https://gonzalezgouveia.com/que-es-tidyverse-8-paquetes-para-ciencia-de-datos/#Que_es_Tidyverse}
+  
+  \bibitem{notas} Ortiz, T. (2014).Sección 3 Manipulación y agrupación de datos. 13 de agosto de 2020, de Sitio web: \url{https://tereom.github.io/est-computacional-2018/}
+  
+
+
+\end{thebibliography}
