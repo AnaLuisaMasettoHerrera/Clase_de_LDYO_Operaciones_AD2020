@@ -1,4 +1,4 @@
-#Introducción a R Y Rstudio
+# Introducción a R Y Rstudio
 
 ## En esta sección se encuentra una breve introducción a R y RStudio. 
 
