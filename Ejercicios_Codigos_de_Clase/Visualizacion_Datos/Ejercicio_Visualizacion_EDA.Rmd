@@ -1,0 +1,371 @@
+---
+title: 'Ejercicio en clase: Análisis Exploratorio de los Datos - Visualización de Datos'
+output: pdf_document
+---
+# Introducción 
+
+En este documento se tratan dos conceptos muy importantes a considerar un proyecto de Ciencia de Datos: _Visualización de Datos_ y _Análisis Exploratorio de los Datos (EDA)._
+
+## Análisis Exploratorio de los Datos 
+
+El Análisis Exploratorio de Datos tiene como objetivo, _examinar los datos_ para conseguir un _entendimiento básico_ con respecto al comportamiento de los datos y algunas _relaciones_ existentes entre ellos. Además, este análisis nos permite encontrar problemas de calidad no detectados con anterioridad, como datos ausentes, casos atípicos, etc. \cite{EDA}
+
+Para enriquecer el Análisis Exploratorio de los Datos, se utilizan medidas estadísticas básicas, tablas y gráficas, sin embargo, su cálculo no es suficiente; es necesario plasmar los resultados y la información construida, lo más claro y sencillo posible, es por eso, que se siguen los principios básicos del concepto de _visualización de datos_. 
+
+## Visualización de los Datos
+
+### Personas importantes: 
+
+_John Wilder Tukey:_ Fundador del Análisis Exploratorio de Datos o EDA (Exploratory Data Analysis). Su libro Exploratory Data Analysis (1977) es el clásico sobre este tema. EDA es una filosofía básicamente gráfica de exploración de datos estadísticos. \cite{Tukey}
+
+_Edward Tufte:_ (Estadístico y Artista) De acuerdo al New York Times, Edward Tufte es el Leonardo da Vinci de los datos". \cite{Tufte}
+
+_Charles Joseph Minard:_ Ingeniero civil francés reconocido por su importante aportación en el terreno de los gráficos. \cite{Minard}
+
+### Principios del Diseño Analítico - Edward Tufte \cite{Tufte_6}
+
+1. Muestra comparaciones. 
+2. Muestra causalidad. 
+3. Utiliza datos multivariados. 
+4. Modos de Integración completos (palabras, números, imágenes y diagramas).
+5. Establecer credibilidad. 
+6. Se centra en el contenido. 
+
+### Chartjunk
+
+El _chartjunk_ son aquellos elementos gráficos que no corresponden a variación de datos, o que entorpecen la interpretación de una gráfica.\cite{Tere}
+  * Todo lo que quita atención de los datos. 
+  
+### Charles Joseph Minard - Marcha de Napoleón sobre Moscú \cite{Tere}
+
+_“Bien podría ser el mejor gráfico estadístico jamás dibujado.”_
+
+_“Cuenta una historia rica y coherente con sus datos multivariados, mucho más esclarecedora que un solo número que rebota en el tiempo.”_
+
+  _-Edward Tufte._
+
+__Variables:__ tropas de Napoleón, distancia, temperatura, latitud y longitud, dirección en que viajaban las tropas y la localización relativa a fechas específicas.
+
+\begin{figure}[h]
+\includegraphics{minard.png}
+\centering
+\caption{Charles Joseph Minard - Marcha de Napoleón sobre Moscú.}
+\end{figure}
+
+
+# Ejercicio en Clase 
+
+```{r, message=FALSE, warning=FALSE}
+#Librería base 
+library(tidyverse)
+```
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+```
+
+## ggplot2 
+
+Tips para manejar ggplot2: https://rstudio.com/wp-content/uploads/2015/04/ggplot2-spanish.pdf
+
+Notación básica: 
+
+_ggplot(dataframe, aes(x=, y=, fill=)+_
+
+  _geom_bar()_
+  
+  _geom_point()_
+  
+  _geom_boxplot()_
+  
+  _geom_line()_
+
+
+### MPG - MILLES PER GALLON 
+
+```{r}
+ejercicio_2 <- mpg
+head(ejercicio_2)
+```
+```{r}
+#?mpg
+```
+
+## Variables 
+
+__Manufacturer:__ Empresa manufacturera. 
+
+__Model:__ Modelo 
+
+__Displ:__ Desplazamiento del motor (en litros)
+
+__Year:__ Año de creación 
+
+__Cyl:__ Número de cilindros 
+
+__Trans:__ Tipo de transmisión 
+
+__Drv:__ f = front-wheel drive, r = rear wheel drive, 4 = 4wd
+
+__City:__ City miles per gallon (Millas en ciudad por galón). 
+
+__Hwy:__ Highway miles per gallon (Millas en carretera por galón).
+
+__Fl:__ Tipo de combustible
+
+__Class:__ Tipo de coche
+
+```{r}
+summary(ejercicio_2)
+```
+
+
+## Preguntas 
+
+1. ¿Cuántos años tenemos de registros? 
+
+```{r}
+pregunta_1 <- ejercicio_2 %>% 
+  select(year) %>% 
+  arrange(year) %>% 
+  unique()
+
+pregunta_1
+```
+
+2. ¿Cuántas marcas tenemos? 
+
+```{r}
+pregunta_2 <- ejercicio_2 %>% 
+  select(manufacturer) %>% 
+  arrange(manufacturer) %>% 
+  unique()
+
+pregunta_2
+```
+
+3. ¿Cuántos modelos distintos hay? 
+
+```{r}
+pregunta_3 <- ejercicio_2 %>% 
+  select(model) %>% 
+  arrange(model) %>% 
+  unique()
+
+pregunta_3
+```
+
+4. ¿Cuántos tipos de transmición hay? 
+
+```{r}
+pregunta_4 <- ejercicio_2 %>% 
+  select(trans) %>% 
+  arrange(trans) %>% 
+  unique()
+
+pregunta_4
+```
+
+5. ¿Cuántos tipos de combustuble hay? 
+
+```{r}
+pregunta_5 <- ejercicio_2 %>% 
+  select(fl) %>% 
+  arrange(fl) %>% 
+  unique()
+
+pregunta_5
+```
+
+6. Con relación a las marcas manufactureras, ¿Cómo se comportan los registros? - ¿Qué marca manufacturera tiene más registros? 
+
+```{r}
+im_pg6 <- ggplot(ejercicio_2, aes(x = manufacturer)) +
+  geom_bar()
+im_pg6
+```
+
+```{r}
+# fct_infreq: Reorder factors levels by first appearance, frequency, or numeric order.
+
+im_pg6 <- ggplot(ejercicio_2, aes(x = forcats::fct_infreq(manufacturer))) +
+  geom_bar()
+im_pg6
+```
+
+```{r}
+im_pg6 <- ggplot(ejercicio_2, aes(x = forcats::fct_infreq(manufacturer), fill = manufacturer)) +
+  geom_bar()
+im_pg6
+```
+
+```{r, fig.width= 20, fig.height=9}
+im_pg6 <- ggplot(ejercicio_2, aes(x = forcats::fct_infreq(manufacturer), fill = manufacturer)) +
+  geom_bar() + 
+  theme_classic()+
+  xlab("Empresa manufacturera") + 
+  ylab("Frecuencia")
+
+im_pg6
+```
+
+Colores: http://applied-r.com/wp-content/uploads/2019/01/rcolors_byname.png
+
+
+```{r, fig.width= 20, fig.height=9}
+im_pg6 <- ggplot(ejercicio_2, aes(x = forcats::fct_infreq(manufacturer), fill = manufacturer)) +
+  geom_bar() + 
+  theme_classic()+
+  xlab("Empresa manufacturera") + 
+  ylab("Frecuencia")+
+  scale_fill_manual(values=c("gray91","gray91","darkblue","skyblue","gray91","gray91","gray91","gray91","black","black","gray91","gray91","gray91","darkblue","skyblue"))+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="italic"),
+        title = element_text(size=20,face="italic"))+
+  labs(title="Frecuencia de empresas manufactureras en dataset")
+
+im_pg6
+```
+
+7. ¿Cómo se comportan las diferentes empresas manunfactureras con respecto a las millas por galón en autopista? 
+
+```{r}
+im_pg7 <- ggplot(ejercicio_2, aes(x = manufacturer, y = hwy)) + 
+  geom_point()
+
+im_pg7
+```
+
+```{r, fig.width=20, fig.height=9}
+im_pg7 <- ggplot(ejercicio_2, aes(x = manufacturer, y = hwy, fill=manufacturer)) + 
+  geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=8)+
+  theme_classic()
+
+im_pg7
+```
+
+
+8. ¿Cómo se comportan las diferentes empresas manunfactureras con respecto a las millas por galón en ciudad? 
+
+```{r, fig.width=20, fig.height=9}
+im_pg8<- ggplot(ejercicio_2, aes(x = reorder(manufacturer,-cty), y = cty, fill=manufacturer)) + 
+  geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=8)+
+  theme_classic()
+
+im_pg8
+```
+
+9. Comportamiento anterior, haciendo un análisis por número de cilindros
+
+```{r, fig.width=20, fig.height=12}
+im_pg9 <- ggplot(ejercicio_2, aes(x = manufacturer, y = cty, fill=manufacturer)) + 
+  geom_boxplot() +
+  facet_wrap(~ cyl) +
+  theme_classic() + 
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4)
+
+im_pg9
+```
+
+### BABY NAMES
+
+```{r, message=FALSE, warning=FALSE}
+#install.packages("babynames")
+library(babynames)
+```
+
+```{r}
+ejercicio_3 <- babynames
+glimpse(ejercicio_3)
+```
+
+```{r}
+head(ejercicio_3)
+```
+
+1. ¿Cuántos años hay de registro? 
+
+Registros desde 1880 hasta 2017.
+
+```{r}
+ejercicio_3 %>% select(year)%>%unique()
+```
+
+2. ¿Cuántos nombres distintos hay? 
+
+```{r}
+ejercicio_3 %>% select(name)%>%unique()
+```
+
+3. Comportamiento de nombre_______ a lo largo de los años
+
+Caso 1: Alex
+
+```{r}
+caso1 <- ejercicio_3%>%filter(name=="Alex")
+```
+
+```{r}
+ggplot(caso1, aes(x = year, y = n)) +
+  geom_point()
+```
+
+```{r, fig.width=20, fig.height=6}
+ggplot(caso1, aes(x = year, y = n, color=sex)) +
+  geom_point()+
+  geom_line() + 
+  theme_classic()
+```
+
+Caso 2: Thor
+
+```{r}
+caso2 <- ejercicio_3%>%filter(name=="Thor")
+```
+
+```{r, fig.width=20, fig.height=6}
+ggplot(caso2, aes(x = year, y = n)) +
+  geom_point(color="blue")+
+  geom_line(color="blue") + 
+  theme_classic() + 
+  geom_smooth(method = "lm")
+```
+
+
+Caso 3: Bella
+
+```{r}
+caso3 <- ejercicio_3 %>% filter(name=="Bella")
+```
+
+```{r, fig.width=20, fig.height=6}
+ggplot(caso3, aes(x = year, y = n, color=sex)) +
+  geom_point()+
+  geom_line() + 
+  theme_classic()
+```
+
+
+\renewcommand\refname{Referencias}
+
+\begin{thebibliography}{0}
+  
+  \bibitem{EDA} Salvador Figueras, M y Gargallo, P. (2003). "Análisis Exploratorio de Datos". 03 de septiembre de 2020, de 5campus.com Sitio web: \url{https://ciberconta.unizar.es/leccion/aed/ead.pdf}
+  
+  \bibitem{Tukey} Smyers, K. "John Wilder Tukey: The Pioneer of Big Data and Visualization". (2013). 03 de septiembre de 2020, de Control Trends Sitio web: \url{https://controltrends.org/controltalk-now-2/control-talk/05/john-wilder-tukey-the-pioneer-of-big-data-and-visualization/}
+  
+  \bibitem{Tufte} Graphics Press. "The work of Edward Tufte and Graphics Press". (s.f). 03 de septiembre de 2020, de EdwardTufte Sitio web: \url{https://www.edwardtufte.com/tufte/}
+  
+  \bibitem{Minard} INE. "Tercera etapa: 1851-1900 / Charles Joseph Minard (1781-1870)". (s.f). 03 de septiembre de 2020, de INE Sitio web: \url{https://www.ine.es/expo_graficos2010/expogra_autor3.htm}
+  
+  \bibitem{Tufte_6} Sites Google. "Tufte on Design and Data". (s.f). 03 de septiembre de 2020, de Sites Google Sitio web: \url{https://sites.google.com/site/tufteondesign/home/six-fundamental-principles-of-design#:~:text=Tufte%20suggests%20six%20fundamental%20principles,credibility%2C%20and%20focus%20on%20content.&text=For%20each%20principle%2C%20we%20outline,it%20to%20improve%20your%20visualizations.}
+  
+  \bibitem{Tere} Ortiz, T. "Estadística Computacional". (2018). 03 de septiembre de 2020, de Github Sitio web: \url{https://github.com/tereom/est-computacional-2018}
+  
+\end{thebibliography}
+
+
+
+
+
