@@ -1,0 +1,123 @@
+---
+title: "Actividad_6_Equipo_2_limpieza_de_datos"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+motorola2 <- read.csv("equipo_2_motorola_datos_sucios.csv")
+```
+
+##Análisis general de datos
+```{r}
+dim(motorola2)
+```
+
+```{r}
+str(motorola2)
+```
+```{r}
+summary(motorola2)
+```
+```{r}
+names(motorola2)
+#levels(motorola2$punto_de_venta)
+
+```
+##Análisis de variables
+
+#Punto de venta
+
+```{r}
+motorola2$punto_de_venta<- as.factor(motorola2$punto_de_venta)
+```
+```{r}
+levels(motorola2$punto_de_venta)
+```
+```{r}
+motorola2$punto_de_venta <- str_replace(motorola2$punto_de_venta, "5 mayo zmm", "5 de mayo zmm")%>%
+  str_replace("ace BENITO JUAREZ", "ace benito juarez")%>%
+  str_replace("ace FRACChidalgo","ace fracchidalgo")%>%
+  str_replace("cruz dl sr", "cruz del sur")%>%
+  str_replace("colosio hrmosillo","colosio hermosillo")
+```
+
+#Mes
+
+```{r}
+motorola2%>%select(mes)%>%unique()
+```
+```{r}
+motorola2$mes <- str_replace(motorola2$mes, "JUL", "7")%>%
+  str_replace("AGOSTO", "8")%>%
+  str_replace("NOV", "11")%>%
+  str_replace("DIC", "12")%>%
+  str_replace("FEB", "2")
+```
+
+#Año
+```{r}
+motorola2%>%select(anio)%>%unique()
+```
+```{r}
+motorola2$anio <- str_replace(motorola2$anio, "18", "2018")%>%
+  str_replace("20202018", "2018")%>%
+  str_replace("202018", "2018")
+```
+
+#Marca
+
+```{r}
+motorola2%>%select(marca)%>%unique()
+```
+
+```{r}
+motorola2$marca <- str_replace(motorola2$marca, "motorola", "Motorola")%>%
+  str_replace("Motorola-motorola", "Motorola")%>%
+  str_replace("MOTOROLA", "Motorola")%>%
+  str_replace("mMotorola", "Motorola")%>%
+  str_replace("Motorola-Motorola", "Motorola")
+```
+
+#Zona
+
+```{r}
+motorola2%>%select(zona)%>%unique()
+```
+```{r}
+motorola2$zona <- str_replace(motorola2$zona, "GOLFO DE MEX", "golfo de mexico")
+```
+
+#Estado
+```{r}
+motorola2%>%select(estado)%>%unique()
+```
+
+```{r}
+motorola2$estado <- str_replace(motorola2$estado, "toluca", "estado de mexico")%>%
+  str_replace("tehuacan", "puebla")%>%
+  str_replace("acapulco", "guerrero")
+```
+
+#Latitud
+```{r}
+motorola2%>%select(latitud)%>%unique()
+```
+
+```{r}
+motorola2$latitud <- str_replace(motorola2$latitud, "1793999", "1.793999")
+```
+
+#Longitud
+
+```{r}
+motorola2%>%select(longitud)%>%unique()
+```
+
+```{r}
+motorola2$longitud <- str_replace(motorola2$longitud, "-949106", "-94.91060")
+```
+

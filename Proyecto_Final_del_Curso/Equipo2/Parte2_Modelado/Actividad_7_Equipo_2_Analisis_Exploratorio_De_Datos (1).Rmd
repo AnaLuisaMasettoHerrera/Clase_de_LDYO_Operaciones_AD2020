@@ -1,0 +1,106 @@
+---
+title: "Actividad_7_Equipo_2_Análisis_Exploratorio_De_Datos"
+author: "Liliana Arce; Zaide Pale; Verónica Cisneros"
+date: "9/17/2020"
+output: pdf_document
+---
+```{r}
+library(tidyverse)
+#install.packages("ggplot2")
+library(ggplot2)
+#install.packages("lubridate")
+library(lubridate)
+```
+
+
+###Análisis Exploratorio de datos
+
+##Antecedentes
+
+El siguiente análisis está basado en la recopilación de datos de los distintos puntos de venta de Motorola en el país. Se cuenta con los datos de 10 meses para cada región del país, desde 01/06/2018 al 30/03/2019. En total son 1900 puntos de venta y 34 productos en portafolio de ventas con gamma baja y media. 
+
+```{r}
+motorola2_a7 <- read.csv("motorola_datos_limpios.csv")
+#motorola2_a7
+
+```
+```{r}
+#head(motorola2_a7)
+```
+```{r}
+#dim(motorola2_a7)
+```
+
+```{r}
+names(motorola2_a7)
+```
+```{r}
+str(motorola2_a7)
+```
+
+
+
+##Gráfica 1: Distribución de ventas por zona
+
+Para el análisis de datos se tomó una gráfica de barras para evaluar la frecuencia por zona en el entendido de que la frecuencia de registros está ligada al número de ventas. Con base en la gráfica podemos detectar que la zona con más ventas es la zona centro, mientras que la zona pacífico sur.
+
+Con esta información se puede tener una visualización de las posibles estrategias en ventas con respecto a cada zona, es decir, trabajar en estrategias para concentrar las actividades en la zona centro que es la más redituable por el número de ventas y la zona del pacífico sur como un foco rojo para atender la estrategia que ayude a incrementar las ventas en esas zonas.
+
+Consideramos como un factor la densidad de población de la zona como una influencia para el resultado de las ventas en las distintas regiones; concentrándose, por ello, en la zona centro.
+
+```{r fig.width=20, fig.height=7}
+g_1 <- ggplot(motorola2_a7, aes(x= forcats::fct_infreq(zona), fill= zona))+
+  geom_bar()+
+  labs(title = "Distribución de ventas por zona")+
+   theme_classic()+
+  xlab("Zona")+
+  ylab("Conteo: frecuencia de ventas")+
+  theme(axis.text = element_text(size=14),
+        axis.title = element_text(size=16, face="italic"),
+        title = element_text(size=20, face = "italic"))
+g_1
+```
+
+##Gráfica 2: Distribución de los costos prmedio por zona
+
+Con la siguiente gráfica se buscaba identificar si el costo promedio de los productos influenciaba la intención de compra por zona. Lo que refelja la gráfica de boxplot es que la variación de los costos promedio por zona es constante, basándonos en la ausencia de outliers en los datos.
+
+Esto puede deberse a la estabilidad de la demanda en los últimos dos años, es decir, la fluctuación de las ventas para cada zona se han mantenido constante indicando que las ventas no han subido. Lo anterior es de relevancia para el estudio puesto que indica que lejos de buscar una estabilidad de la demanda se busca aumentarla satisfaciendo las necesidades del mercado.
+
+```{r fig.width=20, fig.height=6}
+p4 <- ggplot(motorola2_a7, aes(x=zona , y= costo_promedio, fill=zona))+
+  geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 8)+
+  theme_classic()+
+   labs(title = "Distribución de costo promedio por zona")+
+  stat_summary(fun.y = mean, geom = "point", shape=23, size=4)
+#Borrar franjas con tema clásico
+
+p4
+```
+##Gráfica 3. Distribución de ventas por mes
+
+Con base en la siguiente gráfica y la línea de tendencia, podemos apreciar que esta se encuentra en estado constante, ya que es más hacia horizontal que sesgada. 
+Esto quiere decir, que de acuerdo a lo comentado en la Gráfica 2, la demanda resulta ser estable, siendo claro que, por el mes de diciembre, se encuentra el pico más alto de ventas, considerando que se presentan días festivos. Por otra parte, al finalizar vacaciones de enero, se observa una disminución considerable de la misma, posicionándose fuera o cerca de un posible límite inferior.
+Elaborar esta gráfica es de suma relevancia, ya que nos permite identificar el grado de estacionalidad en las ventas, para poder generar los mejores pronósticos con los métodos adecuados.
+
+
+```{r}
+motorola2_a7$fecha<-as.Date(motorola2_a7$fecha,format="%d/%m/%Y")
+#motorola2_a7
+```
+
+
+```{r}
+g_3<-motorola2_a7%>%group_by(month=floor_date(fecha,"month"))%>%summarize(amount_sum=sum(num_ventas))
+ggplot(g_3,aes(x=month,y=amount_sum))+geom_line(color='dodgerblue4',size=3)+theme_classic()+geom_smooth(method = "lm")+
+  xlab("Mes")+ylab("Ventas")+
+   labs(title = "Distribución de ventas por mes")
+```
+
+
+
+
+
+
+
+
