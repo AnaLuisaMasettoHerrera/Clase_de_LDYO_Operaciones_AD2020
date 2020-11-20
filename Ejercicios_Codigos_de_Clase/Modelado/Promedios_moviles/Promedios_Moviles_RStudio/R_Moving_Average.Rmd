@@ -1,0 +1,70 @@
+---
+title: "Moving Average - RStudio (librería de zoo)"
+output: html_document
+---
+Como ejercicio adicional, se hace un promedio movil para los datos obtenidos del repositorio de Github: https://raw.githubusercontent.com/mjfrigaard/storybench/master/drafts/data/jhsph/2020-06-22-JHCovid19States.csv
+
+Los datos corresponden a los registros registrados por: Center for Systems Science and Engineering at the Johns Hopkins Whiting School of Engineering. 
+
+```{r, warning=FALSE, message=FALSE}
+#Librerias
+library(tidyverse)
+library(readr) #leer datos en repositorio de github
+```
+
+```{r}
+#Lectura de datos
+JHCovid19States <- read_csv("https://raw.githubusercontent.com/mjfrigaard/storybench/master/drafts/data/jhsph/2020-06-22-JHCovid19States.csv")
+head(JHCovid19States)
+```
+
+
+```{r}
+#Selección de variables 
+datos <- JHCovid19States %>% select(state, date, month_abbr, day, deaths)
+#unique(datos$month_abbr) - no vamos a agrupar por diversas razones: 1. solamente tenemos 3 meses de registros - Dada la naturaleza del problema, una predicción por día es de interes
+#unique(datos$state) # Tenemos 51 estados
+
+#datos <- datos %>% arrange(state,date)
+head(datos)
+#Cuidado con la series de tiempo completo
+```
+
+```{r}
+datos <- datos %>% arrange(state,date)
+head(datos)
+```
+
+```{r}
+library(zoo)
+#Cuidado, el tamaño de la ventana es de 3 y en el primer caso en lugar de tener 2 espacios con NA, solamente tiene 1 
+datos <- datos %>%
+  group_by(state)%>% #Revisar alabama y alaska para ver que se ejecute propiamente
+  mutate(ma_1 = rollmean(deaths, k = 3, fill = NA)) %>%
+  mutate(ma_2_correct = rollmean(deaths, k = 3, fill = NA, align = "right"))
+
+datos 
+```
+
+```{r}
+#calculo de errores por mes de todos los estados 
+
+errores_abril <- datos %>% filter(month_abbr=="Apr")%>%
+  mutate(error_abril = deaths - ma_2_correct)
+errores_abril
+```
+
+```{r}
+#función MAE
+mae <- function(error)
+{
+    mean(abs(error), na.rm=TRUE)
+}
+
+```
+
+```{r}
+#Llamar la función 
+mae(errores_abril$error_abril)
+```
+
