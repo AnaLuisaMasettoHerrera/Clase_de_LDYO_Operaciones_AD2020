@@ -1,0 +1,195 @@
+---
+title: "PROYECTO LIMPIEZA DE DATOS"
+output: html_document
+---
+
+PROYECTO LIMPIEZA DE DATOS
+EQUIPO 4
+---
+title: "Actividad_Analisis_Exploratorio_de_datos"
+output: html_document
+---
+EQUIPO 4, DATALENTED
+INTEGRANTES: DANIELA SOTELO
+             JORGE ABRAHAM SÁNCHEZ 
+EMPRESA: APPLE 
+
+{r}
+library(tidyverse)
+
+
+{r}
+apple_data <- read.csv("datos_apple.csv")
+
+
+{r}
+head(apple_data)
+
+
+{r}
+str(apple_data)
+
+
+{r}
+dim(apple_data)
+
+
+{r}
+names(apple_data)
+
+
+{r}
+summary(apple_data)
+
+
+ANALISIS POR VARIABLES
+
+Variable 1. Punto de venta
+Hay 5 puntos de venta escritos de manera errónea, hay que corregirlos
+
+{r}
+apple_data %>% select(punto_de_venta) %>% unique()
+
+
+{r}
+levels(apple_data$punto_de_venta)
+
+
+{r}
+apple_data$punto_de_venta<-tolower(apple_data$punto_de_venta)
+
+
+{r}
+apple_data$punto_de_venta<-str_replace(apple_data$punto_de_venta,"é","e")%>%
+  str_replace("á","a")%>%
+  str_replace("í","i")%>%
+  str_replace("ó","o")%>%
+  str_replace("ú","u")
+
+
+
+{r}
+apple_data$punto_de_venta<-str_replace(apple_data$punto_de_venta,"arsa americss","arsa americas")
+
+
+{r}
+apple_data$punto_de_venta<-str_replace(apple_data$punto_de_venta,"bestbuy polanco","best buy polanco")
+
+
+{r}
+apple_data$punto_de_venta<-str_replace(apple_data$punto_de_venta,"chedraui tlajomlco","chedraui tlajomulco")
+
+
+
+
+Variable 2. Mes 
+
+{r}
+apple_data %>% select(mes) %>% unique()
+
+
+{r}
+apple_data$mes<-str_replace(apple_data$mes,"AGOSTO","8")%>%
+str_replace("DIC","12")%>%
+str_replace("OCT","10")%>%
+str_replace("NOV","11")%>%
+str_replace("SEPT","9")
+
+
+Variable 3. Año
+
+{r}
+apple_data$anio<-as.numeric(apple_data$anio)
+
+
+{r}
+str(apple_data)
+
+
+{r}
+apple_data %>% select(anio) %>% unique()
+
+{r}
+#apple_data$anio<-str_replace(apple_data$anio,"18","2018")
+apple_data$anio<-str_replace(apple_data$anio,"202018","2018")
+
+
+
+
+
+Variable 4. Marcas 
+
+
+{r}
+apple_data %>% select(marca) %>% unique()
+
+
+{r}
+apple_data$marca<-tolower(apple_data$marca)
+
+
+{r}
+apple_data$marca<-str_replace(apple_data$marca,"apple-apple","apple")%>%
+str_replace("aapple","apple")
+
+
+
+
+Variable 5. Zona
+
+{r}
+apple_data %>% select(zona) %>% unique()
+
+
+{r}
+apple_data$zona<-tolower(apple_data$zona)
+
+
+
+Variable 6. Estados
+
+{r}
+apple_data %>% select(estado) %>% unique()
+
+
+
+{r}
+apple_data$estado<-str_replace(apple_data$estado,"monterrey","nuevo leon")%>%
+str_replace("culiacan","sinaloa")%>%
+str_replace("xalapa","veracruz")
+
+
+
+Variable 7. Latitud 
+
+{r}
+apple_data %>% select(latitud) %>% unique()
+
+
+{r}
+apple_data%>%filter(latitud > 33)
+
+{r}
+apple_data%>%filter(estado == "sinaloa")
+
+{r}
+apple_data$latitud<-str_replace(apple_data$latitud,"2481415","2.474771e+01")
+
+
+
+Variable 8. Longitud
+{r}
+apple_data%>%filter(longitud < -118)
+
+{r}
+apple_data%>%filter(estado == "sinaloa")%>% filter(ciudad=="culiacan")
+
+
+
+
+
+{r}
+apple_data$longitud<-str_replace(apple_data$longitud,"-1073997","-107.4252")
+
+
+Culiacan centro 75b era el punto de venta dónde la latitud y la longitud se encontraban mal.
