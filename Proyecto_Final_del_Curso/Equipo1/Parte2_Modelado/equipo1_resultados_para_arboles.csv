@@ -1,0 +1,17 @@
+metrica,conjunto,mes,modelo_base,dt_1_profundidad,rf_1_profundidad_5,rf_1_profundidad_100,rf_2_profundidad_300
+mae,entrenamiento,julio,NaN,1.338553,1.338351,1.338351,1.338351
+mae,entrenamiento,agosto,NaN,1.266115,0.532796,0.889206,0.890809
+mae,entrenamiento,septiembre,NaN,0.57538,0.410355,0.398941,0.397877
+mae,entrenamiento,octubre,NaN,0.53961,0.350029,0.330987,0.330604
+mae,entrenamiento,noviembre,NaN,0.51939,0.309646,0.287941,0.287371
+mae,entrenamiento,diciembre,NaN,0.55565,0.311627,0.28674,0.285912
+mae,entrenamiento,enero,NaN,0.57061,0.29491,0.266421,0.265615
+mae,entrenamiento,febrero,NaN,0.56645,0.283611,0.254248,0.253458
+mae,prueba,Agosto,0.52059,1.33855,1.338351,1.338351,1.338351
+mae,prueba,septiembre,0.52834,1.26612,0.532796,0.889206,0.890809
+mae,prueba,octubre,0.46393,0.57538,0.410355,0.398941,0.397877
+mae,prueba,noviembre,0.50874,0.53961,0.350029,0.330987,0.330604
+mae,prueba,diciembre,0.70453,0.51939,0.309646,0.287941,0.287371
+mae,prueba,enero,0.6562,0.55565,0.311627,0.28674,0.285912
+mae,prueba,febrero,0.715,0.57061,0.29491,0.266421,0.265615
+mae,prueba,marzo,0.60042,0.56645,0.283611,0.254248,0.253458
