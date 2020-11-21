@@ -1,0 +1,190 @@
+---
+title: "Act_6_Datosfinales_a01365068_Guillermo_Rivera"
+author: "memo"
+date: "31/8/2020"
+output: html_document
+---
+#Act6. Limpieza de Datos: Proyecto Final
+
+## 1. Descargar los datos que se encuentran en CANVAS en la sección de “Proyecto final” y hacer una breveintroducción RStudio sobre el equipo y la marca que van a analizar.
+
+
+```{r}
+library(tidyverse)
+```
+```{r}
+datos_suciosH <- read.csv("equipo_1_huawei_datos_sucios.csv")
+```
+
+Nosotros, como equipo 1 Silvana, Guillermo y Alejandra, analizaremos los datos de la marca Huawei con respecto a sus ventas por fecha, punto de venta, mes, año, numero de piezas vendidas, sku (código de referencia), marca, gamma, costo promedio, zona, estado, ciudad, y latitud y longitud del punto de venta
+
+```{r}
+head(datos_suciosH,6)
+```
+
+```{r}
+str(datos_suciosH)
+```
+```{r}
+summary(datos_suciosH)
+```
+# Análisis por variable
+
+Variable:  Punto de venta Hay 5 puntos de venta escritos de manera erronea, hay que corregirlos.
+#Respuesta
+```{r}
+datos_suciosH1 <- datos_suciosH%>% mutate(valor_individual = 1)
+```
+```{r}
+datos_suciosH1%>%select(punto_de_venta)%>%unique()
+```
+```{r}
+datos_suciosH1$punto_de_venta<- str_replace(datos_suciosH1$punto_de_venta,"1poniente","1 poniente")
+```
+```{r}
+datos_suciosH1$punto_de_venta<- str_replace(datos_suciosH1$punto_de_venta,"ace alhondga","ace alhondiga")
+```
+```{r}
+datos_suciosH1$punto_de_venta<- str_replace(datos_suciosH1$punto_de_venta,"ACE MEGA iguala","ace mega iguala")
+```
+```{r}
+datos_suciosH1$punto_de_venta<- str_replace(datos_suciosH1$punto_de_venta,"centro tzmin","centro tizimin")
+```
+```{r}
+datos_suciosH1$punto_de_venta<- str_replace(datos_suciosH1$punto_de_venta,"acr CENTROapizacotl","acr centroapizacotlx")
+```
+
+```{r}
+datos_suciosH1%>%select(punto_de_venta)%>%unique()
+```
+```{r}
+datos_suciosH1$punto_de_venta<- as.factor(datos_suciosH1$punto_de_venta)
+str(datos_suciosH1)
+```
+
+Variable:  FechaTodos los registros están limpios, siguen el mismo formato. No requiere correcciones.
+Variable:  Mes Esta variable es numérica. Hay valores mal registrados (en lugar de número, son letras).Cambiar los 5 meses que están registrados con letras.
+```{r}
+datos_suciosH1 %>% group_by(mes)%>% summarise(datos_mes=sum(valor_individual)) %>% unique()
+```
+```{r}
+datos_suciosH1$mes<- str_replace(datos_suciosH1$mes,"DIC","12")%>% 
+  str_replace("JUL","7") %>% 
+  str_replace("JUN","6") %>%
+  str_replace("MAR","3") %>%
+  str_replace("SEPT","9")
+datos_suciosH1 %>% group_by(mes)%>% summarise(datos_mes=sum(valor_individual)) %>% unique()
+
+```
+```{r}
+datos_suciosH1$mes<- as.factor(datos_suciosH1$mes)
+str(datos_suciosH1)
+```
+
+
+Variable:  Año La variable de año debe de seguir el formato de un valor númerico de 4 dígitos.
+#Respuesta
+```{r}
+datos_suciosH1$anio<- as.factor(datos_suciosH1$anio)
+str(datos_suciosH1)
+```
+```{r}
+datos_suciosH1 %>% group_by(anio)%>% summarise(datos_anio=sum(valor_individual)) %>% unique()
+```
+```{r}
+#datos_suciosH1$anio<- str_replace(datos_suciosH1$anio,"18","2018")
+datos_suciosH1$anio<- str_replace(datos_suciosH1$anio,"202018","2018")
+datos_suciosH1 %>% group_by(anio)%>% summarise(datos_anio=sum(valor_individual)) %>% unique()
+
+```
+Variable:  Número de ventasTodos los registros están limpios. No requiere correcciones.
+Variable:  SkuTodos los registros están limpios. No requiere correcciones.
+Variable:  Marca Hay 5 marcas que están escritas de forma errónea, hay que corregirlas.
+#Respuesta
+```{r}
+datos_suciosH1 %>% group_by(marca)%>% summarise(datos_marca=sum(valor_individual)) %>% unique()
+```
+```{r}
+datos_suciosH1$marca<- tolower(datos_suciosH1$marca)
+datos_suciosH1$marca<- str_replace(datos_suciosH1$marca,"hhuawei","huawei")%>%
+  str_replace("huawei-huawei","huawei")
+datos_suciosH1 %>% group_by(marca)%>% summarise(datos_marca=sum(valor_individual)) %>% unique()
+
+```
+
+Variable:  GammaTodos los registros están limpios. No requiere correcciones.
+Variable:  CostoTodos los registros están limpios. No requiere correcciones.
+Variable:  ZonaHay 1 zona que esta mal escrita, hay que corregirlas.
+#Respuesta
+```{r}
+datos_suciosH1 %>% group_by(zona)%>% summarise(datos_zona=sum(valor_individual)) %>% unique()
+```
+```{r}
+datos_suciosH1$zona<- tolower(datos_suciosH1$zona)
+datos_suciosH1 %>% group_by(zona)%>% summarise(datos_zona=sum(valor_individual)) %>% unique()
+```
+```{r}
+datos_suciosH1$zona<- as.factor(datos_suciosH1$zona)
+str(datos_suciosH1)
+```
+```{r}
+datos_suciosH1$zona<- str_replace(datos_suciosH1$zona,"centro sur ","centro sur")
+datos_suciosH1 %>% group_by(zona)%>% summarise(datos_zona=sum(valor_individual)) %>% unique()
+```
+
+Variable: Estado Hay 3 estados más de los que en realidad existen, detectarlos y corregirlos.
+#Respuesta
+```{r}
+datos_suciosH1 %>% group_by(estado)%>% summarise(datos_estado=sum(valor_individual)) %>% unique()
+```
+```{r}
+datos_suciosH1$estado<- str_replace(datos_suciosH1$estado,"la paz","baja california sur")%>%
+  str_replace("merida","yucatan")%>%
+  str_replace("metepec","estado de mexico")
+  
+datos_suciosH1 %>% group_by(estado)%>% summarise(datos_estado=sum(valor_individual)) %>% unique()
+
+```
+Variable:  Ciudad Todos los registros están limpios. No requiere correcciones.
+Variable:  Latitud Hay 1 valor fuera de rango. Corregirlo.
+#Respuesta
+```{r}
+max(datos_suciosH1$latitud)
+which.max(datos_suciosH1$latitud)
+```
+```{r}
+datos_suciosH1$latitud<-as.numeric(datos_suciosH1$latitud)
+datos_suciosH1[27828,13]<-"19.41515"
+max(datos_suciosH1$latitud)
+which.max(datos_suciosH1$latitud)
+```
+
+
+Variable:  Longitud Hay 1 valor fuera de rango. Corregirlo.#Respuesta
+#Respuesta
+```{r}
+min(datos_suciosH1$longitud)
+which.min(datos_suciosH1$longitud)
+```
+```{r}
+datos_suciosH1$longitud<-as.numeric(datos_suciosH1$longitud)
+datos_suciosH1[27828,14]<-"-99.49052"
+max(datos_suciosH1$longitud)
+which.max(datos_suciosH1$longitud)
+```
+```{r}
+str(datos_suciosH1)
+```
+```{r}
+datos_suciosH1$anio<- as.factor(datos_suciosH1$anio)
+datos_suciosH1$marca<- as.factor(datos_suciosH1$marca)
+datos_suciosH1$zona<- as.factor(datos_suciosH1$zona)
+datos_suciosH1$estado<- as.factor(datos_suciosH1$estado)
+```
+```{r}
+str(datos_suciosH1)
+```
+```{r}
+write.csv(datos_suciosH1,file="Huawei_datos_limpios.csv",row.names=FALSE)
+#Guardar un archivo con los datos
+```

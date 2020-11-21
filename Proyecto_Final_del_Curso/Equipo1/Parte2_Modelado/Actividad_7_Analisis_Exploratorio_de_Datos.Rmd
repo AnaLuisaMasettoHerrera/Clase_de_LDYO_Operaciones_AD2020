@@ -1,0 +1,100 @@
+---
+title: "Actividad_7_Equipo1_Analisis_Exploratorio_de_Datos"
+output: html_document
+---
+
+```{r}
+actividad7<- read.csv("Huawei_datos_limpios1.csv")
+```
+
+```{r}
+str(actividad7)
+```
+```{r}
+library(tidyverse)
+```
+```{r}
+library(ggplot2)
+```
+
+
+#1. ¿Cuántas ventas por cada modelo de celular existen?
+En esta pregunta utilizamos una gráfica de barras para poder observar mejor cada modelo con su respectivo número de ventas. 
+Este tipo de información es importante ya que, al saber el modelo más demandado en nuestro país, Huawei puede asegurarse de siempre tenerlo en existencia. 
+```{r}
+pregunta_1 <- actividad7 %>% select(sku) %>% unique()
+pregunta_1
+```
+```{r,fig.width=35, fig.height=8 }
+pregunta_1 <- ggplot(actividad7, aes(x=forcats::fct_infreq(sku), fill=sku)) + geom_bar()+theme_classic()+xlab("Modelo de Celular")+ylab("Conteo: Número de Casos")+
+  scale_y_continuous("Conteo: Número de Casos", breaks= seq(0,30000,1000), limits= c(0,30000))+
+  geom_text(stat="count", aes(label=..count..),vjust=-1)+
+  theme(axis.text=element_text(size=10), axis.title=element_text(size=16, face="italic"), title=element_text(size=20, face="italic"))+
+  labs (title="Ventas por Modelo de Teléfono")
+pregunta_1
+```
+
+#2. ¿Cuántas ventas por mes y por año existen?
+Utilizamos diagramas de dispersión para analizar cómo se comportan la suma de las ventas por mes, considerando los dos años por separado. Existe un claro incremento en los últimos meses del año 2018 y enero del 2019, después una caída en los siguientes meses del 2019. Esto también podría ayudar a la compañía a conocer en qué temporadas las ventas son más fuertes.  
+```{r}
+ventasporfecha<- actividad7 %>%  filter(anio==2018) %>% group_by(mes) %>% summarise(Ventas_por_Mes_2018 =sum(num_ventas))
+ventasporfecha 
+
+```
+```{r}
+actividad7$fecha<- as.Date(actividad7$fecha,format="%d/%m/%Y")
+head(actividad7)
+```
+```{r}
+library(lubridate)
+pregunta_2<-actividad7%>%group_by(month=floor_date(fecha,"month"))%>%summarize(amount=sum(num_ventas))
+```
+```{r}
+head(pregunta_2)
+```
+
+```{r}
+library(scales)
+```
+
+```{r}
+ggplot(pregunta_2,aes(x=month, y=amount))+geom_line(color='dodgerblue4',size=2)+theme_classic()+geom_smooth(method = "lm")+xlab("Mes")+ylab("Ventas")
+```
+
+
+```{r}
+pregunta_2_2018 <- ggplot(ventasporfecha,aes(x=mes, y=Ventas_por_Mes_2018))+
+ theme_classic()+ geom_point()+ geom_line()+scale_x_discrete(breaks=c("jun","jul","ag"),
+        labels=c("Dose 0.5", "Dose 1", "Dose 2"))
+pregunta_2_2018
+```
+```{r}
+ventasporfecha<- actividad7 %>%  filter(anio==2019) %>% group_by(mes) %>% summarise(Ventas_por_Mes_2019 =sum(num_ventas))
+ventasporfecha 
+
+```
+```{r}
+pregunta_2_2019 <- ggplot(ventasporfecha,aes(x=mes, y=Ventas_por_Mes_2019))+
+theme_classic()+
+  geom_point()+
+  geom_line()
+pregunta_2_2019
+```
+#3. ¿Cuál es el costo promedio de los teléfonos celulares?
+Utilizamos un diagrama de caja para representar el costo promedio de los celulares de la marca vendidos. Se puede observar que la media no pasa los $5,000 pesos. Esto quiere decir que el segmento de mercado objetivo son personas de clase media y que está muy por debajo de los dispositivos de la competencia.  
+```{r, fig.height=6, fig.width=4}
+pregunta_3<- ggplot(actividad7, aes(x=marca, y=costo_promedio))+
+  geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=3)+
+  theme_classic()+
+  stat_summary(fun.y=mean, geom="point", shape=23, size=2)+scale_y_continuous("Costo promedio", breaks= seq(0,15000,1000), limits= c(0,15000))
+pregunta_3
+```
+
+
+
+
+
+
+
+
+
