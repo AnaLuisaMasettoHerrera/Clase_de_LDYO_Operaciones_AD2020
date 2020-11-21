@@ -1,0 +1,199 @@
+---
+title: "Actividad 06_LIMPIEZADEDATOS_EQUIPO3"
+output:
+  
+  html_document
+ 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+#getwd()
+#abri el doc
+#read
+samsung1 <- read.csv("~/Documents/Semestre ago2020/LABO/samsung_datos_sucios.csv")
+sam_ejercicio <- samsung1
+head(sam_ejercicio)
+str(sam_ejercicio)
+```
+
+#Conociendo mas a fondo el archivo y su dimencion
+```{r}
+dim(sam_ejercicio)
+summary(sam_ejercicio)
+head(sam_ejercicio)
+
+```
+#VARIABLE PUNTO DE VENTA CORRECCION 
+```{r}
+sam_ejercicio %>% select(punto_de_venta)%>%unique()
+
+#163  559MAYUS 624MAYUS 744tuxttla 17046MAYUS
+sam_ejercicio$punto_de_venta <- as.character(sam_ejercicio$punto_de_venta)
+sam_ejercicio$punto_de_venta <- tolower(sam_ejercicio$punto_de_venta)
+sam_ejercicio %>% select(punto_de_venta) %>% unique()
+#Quedan corregidos "ace monte everest, ace reforma y calzada madero
+```
+
+```{r}
+#Corregiremos los 163 y 744
+
+sam_ejercicio$punto_de_venta <- str_replace(sam_ejercicio$punto_de_venta,"aldamacentro","aldama centro") %>%
+  str_replace("tuxttla","tuxtla")
+
+sam_ejercicio %>% select(punto_de_venta)%>%unique()
+
+#al quedar corregidos lo volvemos a dejar como estaba en factor
+sam_ejercicio$punto_de_venta <- as.factor(sam_ejercicio$punto_de_venta)
+class(sam_ejercicio$punto_de_venta)
+
+```
+
+
+
+#SEGUNDA VARIABLE FECHA DEBE SER NUMERICA Y EL MES POR IGUAL
+
+
+```{r}
+sam_ejercicio %>% select(fecha)%>%unique()
+class(sam_ejercicio$fecha)
+#Todas las fechas siguen el mismo formato ahora debemos verificar el mes
+################################################################################
+
+
+sam_ejercicio %>% select(mes)%>%unique()
+#12-->9
+#36 -->11
+#53 --> 1
+#70 --> 7
+#372 6
+
+class(sam_ejercicio$mes)
+sam_ejercicio$mes <- as.character(sam_ejercicio$mes)
+class(sam_ejercicio$mes)
+
+sam_ejercicio$mes <- str_replace(sam_ejercicio$mes,"SEPT","9")%>%
+  str_replace("NOV","11") %>%
+  str_replace("ENERO","1") %>%
+  str_replace("JUL","7") %>%
+  str_replace("JUN","6")
+
+sam_ejercicio %>%select(mes)%>%unique()
+sam_ejercicio$mes <- as.integer(sam_ejercicio$mes)
+class(sam_ejercicio$mes)
+```
+
+
+# VARIABLE AÑO DEBE SER UN VALOR DE 4 DIGITOS
+
+```{r}
+sam_ejercicio %>% select(anio)%>% unique()
+
+anio_mal <- sam_ejercicio %>% filter(anio <= 19)
+anio_mal
+d <- which(sam_ejercicio$anio < 20)
+d
+sam_ejercicio[c(d),]
+sam_ejercicio[c(d),4] <- 2019
+head(sam_ejercicio)
+sam_ejercicio %>% select(anio)%>% unique()
+```
+
+# VARIABLE MARCAS ESTAN ESCRITAS DE FORMA INCORRECTA
+
+```{r}
+sam_ejercicio %>% select(marca)%>%unique()
+class(sam_ejercicio$marca)
+ #Cambiar tipo variable a caracter
+
+sam_ejercicio$marca <- as.character(sam_ejercicio$marca)
+class(sam_ejercicio$marca)
+
+
+#cnvertir todas a minusculas
+sam_ejercicio$marca <- tolower(sam_ejercicio$marca)
+sam_ejercicio %>% select(marca)%>% unique()
+
+sam_ejercicio$marca <- str_replace(sam_ejercicio$marca,"ss","s") %>%
+  str_replace("-samsung","")
+
+sam_ejercicio %>% select(marca) %>% unique()
+sam_ejercicio$marca <- as.factor(sam_ejercicio$marca)
+class(sam_ejercicio$marca)
+```
+
+# VARIABLE ZONA CORREGIR 
+
+```{r}
+sam_ejercicio %>% select(zona)%>% unique()
+sam_ejercicio$zona <- tolower(sam_ejercicio$zona)
+sam_ejercicio %>% select(zona) %>% unique()
+```
+
+#VARIABLE ESTADO 3--> NO EXISTEN
+
+```{r}
+sam_ejercicio %>% select(estado)%>% unique()
+# 13 tehuacan 
+# 1707 ecatepec
+# 29997 saltillo
+
+```
+
+```{r}
+class(sam_ejercicio$estado)
+sam_ejercicio$estado <- as.character(sam_ejercicio$estado)
+
+sam_ejercicio$estado <- str_replace(sam_ejercicio$estado,"tehuacan","cdmx")%>%
+  str_replace("ecatepec","cdmx")%>%
+  str_replace("saltillo","coahuila")
+
+sam_ejercicio %>% select(estado)%>% unique()
+
+sam_ejercicio$estado <- as.factor(sam_ejercicio$estado)
+class(sam_ejercicio$estado)
+```
+
+# VARIABLE LATITUD FUERA DE RANGO VALORES
+
+```{r}
+sam_ejercicio %>% select(latitud) %>% unique()
+class(sam_ejercicio$latitud)
+
+summary(sam_ejercicio$latitud)
+lat_mal <-  sam_ejercicio %>% filter(latitud >= 40)
+lat_mal
+which(sam_ejercicio$latitud>=40)
+sam_ejercicio[c(26447),]
+sam_ejercicio[c(26447),13] <- 25.46176
+which(sam_ejercicio$latitud>=40)
+summary(sam_ejercicio$latitud)
+```
+
+#VARIABLE LONGITUD FUERA DE RANGO 1 VALOR
+
+```{r}
+sam_ejercicio%>%select(longitud)%>%unique()
+summary(sam_ejercicio$longitud)
+long_mal <- sam_ejercicio %>% filter(longitud <= -200)
+long_mal
+which(sam_ejercicio$longitud<=-200)
+sam_ejercicio[c(26447),]
+sam_ejercicio[c(26447),14]
+sam_ejercicio[c(26447),14] <- -100.9514
+sam_ejercicio[c(26447),14]
+which(sam_ejercicio$longitud<0-200)
+summary(sam_ejercicio$longitud)
+sam_ejercicio[c(26447),]
+```
+
+
+```{r}
+samsung1 <- sam_ejercicio
+write.csv(samsung1,file = "~/Documents/Semestre ago2020/LABO/samsung_datos_limpios.csv")
+```
+

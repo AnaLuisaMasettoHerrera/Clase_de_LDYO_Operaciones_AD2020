@@ -1,0 +1,187 @@
+---
+title: "ACTIVIDAD7_EQUIPO03_EDA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Paquetrias y Librerias
+
+```{r}
+
+library(ggplot2)
+library(ggfortify)
+library(fpp2)
+
+```
+
+
+```{r}
+library(tidyverse)
+
+act7 <- read.csv("~/Documents/Semestre ago2020/LABO/samsung_datos_limpios.csv")
+ejercicio7 <- act7
+
+head(ejercicio7,10)
+
+summary(ejercicio7)
+dim(ejercicio7)
+str(ejercicio7)
+```
+
+```{r}
+#Años de Registro
+p1 <- ejercicio7 %>%
+  select(anio) %>%
+  arrange(anio) %>%
+  unique()
+p1
+```
+```{r}
+# Estados donde se ha vendido 
+p2 <- ejercicio7 %>%
+  select(estado) %>%
+  arrange(estado)%>%
+  unique()
+p2
+
+#Ventas en todos los estados de la Republica
+```
+```{r}
+# Gammas de los telefonos vendidos
+p3 <- ejercicio7 %>%
+  select(gamma) %>%
+  arrange(gamma)%>%
+  unique()
+p3
+
+#4 Gammas que se venden
+```
+```{r}
+#Sucursales o puntos de venta
+p4 <- ejercicio7 %>%
+  select(punto_de_venta) %>%
+  arrange(punto_de_venta)%>%
+  unique()
+p4
+
+#Tenemos 1,788 Puntos de venta
+```
+
+
+```{r}
+#En que meses huboo ventas
+p5 <- ejercicio7 %>%
+  select(mes) %>%
+  arrange(mes)%>%
+  unique()
+p5
+```
+
+
+
+#Primer grafica
+```{r}
+pg_1 <- ggplot(ejercicio7,aes(x=gamma))+geom_bar()+
+  ggtitle("Ventas por gamma")
+
+pg_1
+```
+
+
+```{r}
+#ordenar de mayor a menor
+pg_3 <- ggplot(ejercicio7, aes(x = forcats::fct_infreq(gamma), fill=gamma))+geom_bar()
+theme_classic()+ylab("Ventas")+xlab("Gamma")+ggtitle("Ventas por Gamma de smartphones Samsung")
+pg_3
+
+```
+```{r fig.width=8}
+#Formato especial
+pg_3 <- ggplot(ejercicio7, aes(x = forcats::fct_infreq(gamma), fill = gamma))+ 
+  geom_bar() +
+  theme_classic()+
+  ylab("Ventas")+
+  xlab("Gamma")+
+  ggtitle("Ventas por Gamma de smartphones Samsung")
+
+pg_3
+```
+
+```{r}
+pg_3 <- ggplot(ejercicio7, aes(x = forcats::fct_infreq(gamma), fill = gamma))+ 
+  geom_bar() +
+  theme_classic()+
+  ylab("Ventas")+
+  xlab("Gamma")+
+  ggtitle("Ventas por Gamma de smartphones Samsung")+
+  scale_fill_manual(values=c("aquamarine","coral1","darkmagenta","yellow"))+
+  geom_text(stat="count",aes(label=..count..),vjust=1)
+
+pg_3
+```
+
+
+
+
+
+
+```{r fig.width=20, fig.height=8}
+pregunta_estado <- ggplot(ejercicio7, aes(x = forcats::fct_infreq(estado), fill = estado))+ 
+  geom_bar() +
+  theme_classic()+
+  ylab("Ventas")+
+  xlab("Estado")+
+  ggtitle("Ventas por Estado de smartphones Samsung")
+
+pregunta_estado
+```
+
+```{r}
+pregunta_pv <- ejercicio7 %>% filter(estado=="cdmx") 
+pregunta_pv
+```
+
+```{r}
+costo <- ggplot(ejercicio7, aes(x=gamma,y=costo_promedio, fill=gamma))+
+  geom_boxplot(outlier.colour="maroon4",outlier.shape=4,outlier.size=8)+
+  theme_classic()+
+  stat_summary(fun.y=mean,geom="point",shape=18,size=4)+
+  ylab("Costo")+
+  xlab("Gama")+
+  scale_y_continuous("Gamma",breaks=c(0,2000,4000,6000,8000,10000,12000,14000,16000),limits=c(0,16000))+
+  ggtitle("Costo de smartphones según la Gamma")
+costo 
+```
+
+
+```{r}
+ejercicio7$mes <- as.character(ejercicio7$mes)
+#ordenar de mayor a menor
+ggplot(ejercicio7, aes(x = forcats::fct_infreq(mes), fill = mes))+ 
+  geom_bar() +
+  theme_classic()+
+  ylab("Ventas")+
+  xlab("Mes")+
+  scale_y_continuous("Ventas",breaks=seq(0,35000,5000),limits=c(0,35000))+
+  ggtitle("Ventas por mes en Smart-phones Samsung")
+```
+
+
+```{r}
+cococ <- ejercicio7 %>% filter(estado=="nayarit") 
+cococ
+```
+
+
+
+
+
+
+
+
+
+
+
