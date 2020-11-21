@@ -1,0 +1,52 @@
+---
+title: "ANÁLISIS EXPLORATORIO DE DATOS"
+output: html_document
+---
+
+{r}
+library(ggplot2)
+
+
+1 PUNTOS DE VENTA CONFORME A LOS DISTINTOS ESTADOS.
+
+{r}
+apple_data$punto_de_venta<-as.factor(apple_data$punto_de_venta)
+
+
+{r}
+pv_estados <- apple_data%>%select(punto_de_venta,estado)%>%unique()
+pv_estados
+
+
+
+
+{r, fig.width=15, fig.height=7}
+p1 <- ggplot(pv_estados, aes(x= punto_de_venta, y=estado))+
+  geom_bin2d()+
+  xlab("Puntos de Venta alrededor del país")
+p1
+
+
+En esta gráfica se pueden mostrar los distintos puntos de venta que existen de acuerdo a los Estados de la República. Es importante reconocerlos para saber a qué estados se tienen que mandar más producto, puesto que se tienen más puntos de venta dentro de estos, como se puede observar en la gráfica, dependiendo el color del Estado.
+{r}
+p2 <- ggplot(apple_data, aes(x=gamma, y=costo_promedio, color=gamma))+
+  geom_line()+
+  geom_point()+
+  xlab("Gamma del teléfono")+
+  ylab("Costo promedio")
+p2
+
+Esta gráfica de arriba, nos muestra el tipo de Gamma que tienen los telefonos, ya sea alta o premium y el costo que involucra a cada uno de ellos. 
+
+{r, fig.width=35, fig.height=15}
+p33 <- ggplot(apple_data, aes(x= estado, y=costo_promedio))+
+  geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 8)+
+  theme_classic()+
+  stat_summary(fun.y = mean, geom = "point", shape=23, size=4)+
+  xlab("Estado de la República")+
+  ylab("Costo de los dispositivos")
+p33
+
+
+
+En este últmo gráfico, se observa un boxplot de cómo se comporta el costo promedio de los dispositivos, de acuerdo a cada uno de los estados de la república. Este tipo de gráfica nos ayuda a visualizar y analizar si realmente una región definida tiende a aumentar o disminuir precios a pesar de ser los mismos productos.

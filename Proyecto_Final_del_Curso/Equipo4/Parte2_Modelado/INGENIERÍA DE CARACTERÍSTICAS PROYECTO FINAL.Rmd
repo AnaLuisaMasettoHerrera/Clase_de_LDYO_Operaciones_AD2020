@@ -1,0 +1,226 @@
+---
+title: "INGENIERÍA DE CARACTERÍSTICAS PROYECTO FINAL"
+output: html_document
+---
+
+ACTIVIDAD INGENIERIA DE CARACTERÍSTICAS
+
+1) ÍNDICES
+TIENDA
+
+{r}
+pdv_id <- apple_data%>%select(punto_de_venta)%>%unique()%>%arrange()
+head(pdv_id)
+
+
+{r}
+pdv_id$pdv_id <- as.character(seq.int(nrow(pdv_id)))
+head(pdv_id)
+
+MES
+
+{r}
+mes_id <- apple_data%>%select(mes,anio)%>%unique()%>%arrange(anio,mes)
+mes_id 
+
+{r}
+mes_id$mes_id <- as.character(seq.int(0,9,1))
+mes_id
+
+
+SKU
+
+{r}
+sku_id <- apple_data%>%select(sku)%>%unique()%>%arrange()
+head(sku_id)
+
+
+{r}
+sku_id$sku_id <- as.character(seq.int(nrow(sku_id)))
+head(sku_id)
+
+MARCA NO, SOLO HAY UNA
+
+GAMMA SOLO UNA IGUAL 
+{r}
+head(apple_data[,c("gamma","sku")] %>% 
+  mutate(contador = 1) %>% 
+  group_by(gamma, sku) %>% 
+  summarise(repeticiones = sum(contador)))
+
+
+
+costo_promedio <= 5000: “baja”
+
+costo_promedio > 5000 & costo_promedio<=10000: “media”
+
+costo_promedio > 10000 & costo_promedio<=15000: “alta”
+
+costo_promedio > 15000: “premium”
+
+Zona no - El punto de venta tiene implícita esta información
+Estado no - El punto de venta tiene implícita esta información
+Ciudad no - El punto de venta tiene implícita esta información
+Latitud y longitud no - El punto de venta tiene implícita esta información
+Ventas_totales - No es una variable cualitativa que se pueda indexar
+
+PASO 2!!!!
+{r}
+dim(apple_data)
+
+
+{r}
+apple_data <- left_join(apple_data, pdv_id, by="punto_de_venta")
+head(apple_data) 
+
+
+{r}
+apple_data <- left_join(apple_data, sku_id, by="sku")
+apple_data <- left_join(apple_data, mes_id, by=c("mes","anio"))
+head(apple_data)
+
+
+2) AGRUPAR VENTAS TOTALES
+
+¿Hay más de una venta del mismo producto, en el mismo punto de venta, en la misma fecha (mes)?
+
+Sugerencia:
+
+Quitar variables con información adicional que esta implícita en: punto de venta,
+
+{r}
+apple_data <- apple_data %>% 
+  #quitamos fecha porque vamos a hacer el análisis por mes 
+  group_by(pdv_id, sku_id, mes_id)%>% 
+  summarise(ventas_totales = sum(num_ventas))
+
+head(apple_data)
+
+{r}
+dim(apple_data)
+
+{r}
+names(apple_data)
+
+
+3) COMPLETAR SERIES DE TIEMPO
+
+{r}
+nrow(mes_id)
+
+{r}
+nrow(sku_id)
+
+
+{r}
+nrow(pdv_id)
+
+
+{r}
+nrow(mes_id)*nrow(sku_id)*nrow(pdv_id)
+
+
+
+{r}
+datos_completos <- merge(mes_id, sku_id)
+datos_completos <- merge(datos_completos, pdv_id)
+head(datos_completos)
+
+
+{r}
+datos_completos <- datos_completos %>% select(pdv_id, mes_id, sku_id)
+head(datos_completos)
+
+
+{r}
+datos_completos <- left_join(datos_completos, apple_data, by=c("pdv_id","mes_id","sku_id"))
+head(datos_completos)
+
+
+{r}
+datos_completos[is.na(datos_completos)] <- 0 
+head(datos_completos)
+
+
+4) VARIABLE DE RESPUESTA/ VENTAS DEL SIGUIENTE MES
+
+{r}
+library(dplyr)
+datos_completos <- datos_completos %>% 
+  group_by(pdv_id, sku_id) %>% 
+  mutate(y_ventas_siguiente_mes = lead(ventas_totales,n = 1L, default = NA)) 
+
+head(datos_completos)
+
+
+{r}
+datos_completos <- datos_completos %>% filter(mes_id <= 8)
+head(datos_completos)
+
+
+5) CREAR NUEVAS CARACTERÍSTICAS
+
+PASO1
+
+
+{r}
+mes_pdv <-datos_completos%>%
+  group_by(mes_id, pdv_id)%>%
+  summarise(ventas_totales_en_tienda_de_cada_mes=sum(ventas_totales), 
+            ventas_promedio_en_tienda_de_cada_mes = mean(ventas_totales))
+
+mes_pdv
+
+
+{r}
+mes_sku <-datos_completos%>%
+  group_by(mes_id, sku_id)%>%
+  summarise(ventas_totales_en_tienda_de_cada_sku=sum(ventas_totales), 
+            ventas_promedio_en_tienda_de_cada_sku = mean(ventas_totales))
+
+mes_sku
+
+PASO2
+{r}
+datos_completos <- left_join(datos_completos, mes_pdv, by=c("mes_id", "pdv_id"))
+datos_completos <- left_join(datos_completos, mes_sku, by=c("mes_id", "sku_id"))
+head(datos_completos)
+
+PASO3
+{r}
+datos_completos <- datos_completos %>%
+  group_by(pdv_id, sku_id)%>%
+  mutate(
+    ventas_totales_1_mes_pasado = lag(ventas_totales, n=1), 
+    ventas_totales_2_meses_pasados = lag(ventas_totales, n=2), 
+    ventas_totales_3_meses_pasados = lag(ventas_totales, n=3), 
+    
+    ventas_totales_tienda_y_mes_del_mes_pasado = lag(ventas_totales_en_tienda_de_cada_mes, n=1), 
+    ventas_totales_tienda_y_mes_2_pasado = lag(ventas_totales_en_tienda_de_cada_mes, n=2),
+    ventas_totales_tienda_y_mes_3_pasado = lag(ventas_totales_en_tienda_de_cada_mes, n=3),
+    
+    ventas_promedio_tienda_y_mes_del_mes_pasado = lag(ventas_promedio_en_tienda_de_cada_mes, n=1), 
+    ventas_promedio_tienda_y_mes_2_pasado = lag(ventas_promedio_en_tienda_de_cada_mes, n=2),
+    ventas_promedio_tienda_y_mes_3_pasado = lag(ventas_promedio_en_tienda_de_cada_mes, n=3),
+  
+    ventas_totales_tienda_y_sku_del_mes_pasado = lag(ventas_totales_en_tienda_de_cada_sku, n=1), 
+    ventas_totales_tienda_y_sku_2_pasado = lag(ventas_totales_en_tienda_de_cada_sku, n=2),
+    ventas_totales_tienda_y_sku_3_pasado = lag(ventas_totales_en_tienda_de_cada_sku, n=3),
+    
+    ventas_promedio_tienda_y_sku_del_mes_pasado = lag(ventas_promedio_en_tienda_de_cada_sku, n=1), 
+    ventas_promedio_tienda_y_sku_2_pasado = lag(ventas_promedio_en_tienda_de_cada_sku, n=2),
+    ventas_promedio_tienda_y_sku_3_pasado = lag(ventas_promedio_en_tienda_de_cada_sku, n=3)) 
+
+head(datos_completos,20)
+
+PASO4 
+NA REZAGOS
+{r}
+library(zoo)
+
+{r}
+datos_completos<-na.locf(datos_completos, fromLast = TRUE) 
+head(datos_completos)
+
+{r}
+#write.csv(datos_completos, file="datos_completos.csv", row.names = FALSE)
