@@ -1,0 +1,286 @@
+---
+title: "Limpieza de Datos: Ejercicio en Clase"
+output: pdf_document
+---
+# Introducción 
+
+En un proyecto de Ciencia de Datos es muy importante contar con una estructura de datos que facilite su comprensión y manipulación. Es por eso, que una parte muy importante dentro de un proyecto de ciencia de datos es la __limpiza de datos__. 
+
+El término de __limpieza de datos__ corresponde a un proceso que permite asegurar la calidad de los datos que se van a emplear, para cumplir con el objetivo de un proyecto y poder contestar la pregunta planteada. (En el caso del proyecto final del curso: ¿Cuántas unidades de cada producto se van a vender, en cada punto de venta, el siguiente mes de registro?). En otras palabras, la __limpieza de datos__ es el proceso que se encarga de __corregir los problemas de calidad__ en los datos que se detectaron en la etapa 2 del CRISP-DM, para, al finalizar, contar con un conjunto de datos listos para su análisis e implementación en modelos como solución a una problemática de Ciencia de Datos. 
+
+Retomando, CRISP-DM: 
+
+\begin{figure}[h]
+\includegraphics{im1.png}
+\centering
+\caption{CRISP-DM.}
+\end{figure}
+
+
+__CRISP-DM - Etapa 2: Data Understanding__ 
+
+Algunos de los pasos que se hacen para comprender los datos con más detalle son: 
+
+1. Lectura de Datos. 
+2. Análisis general de los datos. (Formato, dimensión, variables, etc.)
+3. Detectar problemas de calidad en todo el conjunto de datos: 
+  * Valores faltantes. 
+  * Datos no homogéneos (Mayúsculas y Minúsculas / Variables Númericas y Categóricas)
+  * Faltas de ortografía. 
+  * Incongruencias en los datos, 
+  * Valores repetidos. 
+  * Caracteres especiales. 
+
+__CRISP-DM - Etapa 3: Data Preparatation__ 
+
+1. Lectura de los datos. 
+
+2. Detectar problemas de calidad en todo el conjunto de datos. 
+
+3. Corregir los problemas de calidad. 
+  * Imputar valores faltantes. 
+  * Homogeneizar registros. 
+  * Corregir registros. 
+  * Eliminar caracteres especiales y valores repetidos. 
+4. Guardar el nuevo archivo con los datos limpios. 
+
+Con relación al CRISP - DM, la __limpieza de datos__ entra dentro de la tercera etapa __Data Preparation__. ¡Importante! Los pasos siguientes a la limpieza de datos son: __Análisis Exploratorio de los Datos__ e __Ingeniería de Características__. Pasos que aún se consideran dentro de la tercera etapa, __Data Preparation__ del CRISP-DM. 
+
+# Ejercicio en Clase 
+
+```{r, message=FALSE, warning=FALSE}
+#Librerias
+library(tidyverse)
+```
+
+```{r}
+#data()
+```
+
+```{r}
+#Conjunto de datos
+iris_dataset <- iris
+```
+
+```{r}
+#Primeros registros
+head(iris)
+```
+
+```{r}
+#Dimensión del conjunto de datos
+dim(iris_dataset)
+```
+
+```{r}
+#guardar un archivo
+write.csv(iris_dataset, file="iris_dataset.csv", row.names = FALSE)
+```
+
+1. Lectura de datos 
+
+```{r}
+#C:\Users\anamh\Desktop\TEC\Semestre_AD_2020\Laboratorio_DYO_De_Operaciones\Semana4
+iris_ejercicio <- read.csv("iris_dataset.csv")
+```
+
+2. Análisis general de los datos 
+
+```{r}
+#tipo de variables
+str(iris_ejercicio)
+```
+```{r}
+#dimesión
+dim(iris_ejercicio)
+```
+
+```{r}
+#descripción general de las variables 
+summary(iris_ejercicio)
+```
+
+3. Detectar (en este caso, generar) problemas de calidad:
+
+
+```{r}
+head(iris_ejercicio)
+```
+
+Problema 1: Faltas de ortografía, valores mal escritos. (POR COLUMNA)
+
+```{r}
+#cambiar variable Species - como ya esta "bonito" en factor, hay que cambiarlo para generar problemas de calidad
+iris_ejercicio$Species <- as.character(iris_ejercicio$Species)
+```
+
+```{r}
+iris_ejercicio[1,5] <- "set"
+iris_ejercicio[2,5] <- "SETOSA"
+iris_ejercicio[3,5] <- "cetósa"
+
+iris_ejercicio[150,5] <- "Virg"
+iris_ejercicio[148,5] <- "VIRGINICA"
+```
+
+```{r}
+head(iris_ejercicio)
+```
+
+```{r}
+diferentes_species <- iris_ejercicio %>% select(Species)%>%unique()
+diferentes_species
+```
+
+Solución 1: Homogeneizar registros (POR COLUMNA)
+
+```{r}
+#Pasar a minúsculas POR COLUMNA
+iris_ejercicio$Species <- tolower(iris_ejercicio$Species)
+```
+
+```{r}
+iris_ejercicio %>% select(Species)%>%unique()
+```
+
+```{r}
+#Quitar caracteres especiales: acentos, espacios, / , - , _ _, ñ, etc 
+#_ no es malo, depende de cada quien como maneje sus datos (iris_ejercico -> irisejercicio)
+
+iris_ejercicio$Species <- str_replace(iris_ejercicio$Species, "á", "a") %>% 
+  str_replace("é","e")%>%
+  str_replace("í", "i") %>%
+  str_replace("ó","o")%>%
+  str_replace("ú", "u")#%>%
+  #str_replace("ñ","n")%>%
+  #str_replace(" - ", " ")%>%
+  #str_replace("-"," ")%>% 
+  #str_replace("  "," ")
+```
+
+```{r}
+iris_ejercicio %>% select(Species)%>%unique()
+```
+
+```{r}
+#corregir faltas de ortografía 
+iris_ejercicio$Species <- str_replace(iris_ejercicio$Species, "set", "setosa")%>%
+  str_replace("cetosa","setosa") %>% 
+  str_replace("virg","virginica")
+```
+
+__IMPORTANTE:__
+
+```{r}
+iris_ejercicio %>% select(Species)%>%unique()
+```
+
+```{r}
+iris_ejercicio$Species <- str_replace(iris_ejercicio$Species, "virginicainica","virginica") %>% 
+  str_replace("setosaosa","setosa")
+```
+
+```{r}
+iris_ejercicio %>% select(Species)%>%unique()
+```
+
+```{r}
+diferentes_species <- iris_ejercicio %>% select(Species)%>%unique()
+diferentes_species
+```
+
+```{r}
+iris_ejercicio$Species <- as.factor(iris_ejercicio$Species)
+```
+
+```{r}
+class(iris_ejercicio$Species)
+```
+
+```{r}
+levels(iris_ejercicio$Species)
+```
+
+Problema 2: Valores incongruentes
+
+```{r}
+head(iris_ejercicio)
+```
+
+```{r}
+summary(iris_ejercicio)
+```
+
+?iris - saber más información sobre datos 
+
+```{r}
+iris_ejercicio[6,1] <- 54
+iris_ejercicio[5,2] <- 360
+iris_ejercicio[3,1] <- 54
+```
+
+```{r}
+summary(iris_ejercicio)
+```
+
+Solución 2: 
+
+```{r}
+valores_anormales_1 <- iris_ejercicio %>% filter(Sepal.Length >= 50)
+valores_anormales_1
+```
+
+```{r}
+which(iris_ejercicio$Sepal.Length > 50)
+```
+
+```{r}
+iris_ejercicio[c(3,6),]
+```
+
+```{r}
+iris_ejercicio[c(3,6),1] <- 5.4
+head(iris_ejercicio)
+```
+
+Hacer esto para cada uno de los valores fuera de rango. 
+
+Problema 3: NA's
+
+```{r}
+iris_ejercicio[1,5]<-NA
+```
+
+Solución 3: Detectar NA'S imputar valores
+
+```{r}
+na_dataframe <- is.na(iris_ejercicio)
+na_dataframe
+```
+
+```{r}
+class(na_dataframe)
+```
+
+```{r}
+which(is.na(iris_ejercicio$Species))
+```
+
+```{r}
+iris_ejercicio[1,]
+```
+
+```{r}
+iris_ejercicio %>% filter(Sepal.Length==5.1)
+```
+
+```{r}
+iris_ejercicio[1,5] <- "setosa"
+```
+
+```{r}
+head(iris_ejercicio)
+```
+
+
+
